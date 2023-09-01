@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; //Importa la librería de autenticación de Firebase
 import 'package:login_v1/utils/global.colors.dart';
+import 'package:login_v1/view/homeUser.view.dart';
+import 'package:login_v1/view/homeAdmin.view.dart';
 import 'package:login_v1/view/widgets/button.global.dart';
 import 'package:login_v1/view/widgets/text.form.global.dart';
 import 'package:login_v1/view/widgets/social.login.dart';
@@ -18,12 +20,30 @@ class LoginView extends StatelessWidget {
         email: emailController.text,
         password: passwordController.text,
       );
+      _logger.i("que exito");
+      // Obtener el usuario actualmente autenticado
+      User? userInstance = FirebaseAuth.instance.currentUser;
+
+      if (userInstance != null) {
+        //Verificar el rol del usuario y dirigirlo a la pantalla
+        if (userInstance.email == "admin@gmail.com") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeAdminPage()),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeUserPage()),
+          );
+        }
+      }
       // Aqui puedes manejar la navegacion a la siguiente pantalla despues del inicio de seccion exitoso.
     } catch (e) {
       // Aqui puedes manejar los errores de inicio de seccion.
-      //_logger.i("Un mensaje de información"); // i para información
+      _logger.i("Un mensaje de información"); // i para información
       //_logger.d("Un mensaje de depuración"); // d para depuración
-      _logger.e("Un mensaje de error"); // e para error
+      _logger.e("Error en el inicio de sesión: $e"); // e para error
     }
   }
 
